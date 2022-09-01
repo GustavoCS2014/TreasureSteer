@@ -18,8 +18,6 @@ public class PlayerMovement : MonoBehaviour
 
         GetRotationAngle();
         transform.Rotate(new Vector3(0, 0, -(_rotationAngle)) * Time.deltaTime * _rotationSpeed, Space.World);
-
-
     }
 
     private void GetAcceleration()
