@@ -7,17 +7,19 @@ public class PlayerMovement : MonoBehaviour
     private float input, rotationInput;
     [SerializeField] private Rigidbody2D rb2D;
     [SerializeField] private float _velocity, _accelerationRate, _decelerationRate, _torque, _friction, _rotationSpeed;
-    [SerializeField] private float _rotationAngle, _acceleration;
+    [SerializeField] private float _rotationAngle, _acceleration, _accBost = 1f;
 
     void Update()
     {
         rotationInput = Input.GetAxisRaw("Horizontal");
         input = Input.GetAxisRaw("Vertical");
         GetAcceleration();
-        rb2D.velocity = transform.up * _acceleration * _velocity;
+        rb2D.velocity = transform.up * _acceleration * _velocity * _accBost;
 
         GetRotationAngle();
         transform.Rotate(new Vector3(0, 0, -(_rotationAngle)) * Time.deltaTime * _rotationSpeed, Space.World);
+
+        Propulsion();
     }
 
     private void GetAcceleration()
@@ -85,5 +87,27 @@ public class PlayerMovement : MonoBehaviour
                 break;
         }
 
+    }
+
+    public void TeleportPlayerY()
+    {
+        transform.position *= new Vector2(1, -1);
+    }
+
+    public void TeleportPlayerX()
+    {
+        transform.position *= new Vector2(-1, 1); 
+    }
+
+    private void Propulsion()
+    {
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            _accBost = 8f;
+            Debug.Log("BOOST");
+        } 
+
+        _accBost = _accBost * 0.5f * Time.deltaTime;
+        if (_accBost < 1.01f) _accBost = 1; 
     }
 }
