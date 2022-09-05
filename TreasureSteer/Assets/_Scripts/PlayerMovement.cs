@@ -22,35 +22,30 @@ public class PlayerMovement : MonoBehaviour
         Propulsion();
     }
 
+
     private void GetAcceleration()
     {
         switch (input)
         {
             case 1:
-                if (_acceleration < 1)
-                {
-                    _acceleration += _accelerationRate;
-                    if (_acceleration > 0.99f) _acceleration = 1f;
-                }
+                _acceleration += _accelerationRate;
+                if (_acceleration > 1f) _acceleration = 1f;
                 break;
             case 0:
-                if (_acceleration > 0)
+                if(_acceleration > 0)
                 {
                     _acceleration -= _decelerationRate;
-                    if (_acceleration < 0.001f) _acceleration = 0f;
+                    if (_acceleration < 0.001f) _acceleration = 0;
                 }
-                if (_acceleration < 0)
+                if(_acceleration < 0)
                 {
                     _acceleration += _decelerationRate;
-                    if (_acceleration > -0.001f) _acceleration = 0f;
+                    if(_acceleration > -0.001f) _acceleration = 0;
                 }
                 break;
             case -1:
-                if (_acceleration > -1)
-                {
-                    _acceleration -= _accelerationRate;
-                    if (_acceleration < -0.99f) _acceleration = -1f;
-                }
+                _acceleration -= _accelerationRate;
+                if (_acceleration < -1f) _acceleration = -1f;
                 break;
         }
     }

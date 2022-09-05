@@ -1,51 +1,85 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Collisions: MonoBehaviour
 {
-    public int health = 100, points = 0;
-
     PlayerMovement playerMovement;
+    PlayerStats stats;
+    [SerializeField] private bool _teleported;
+    [SerializeField] private float _timeLeft, _defaultTimer;
 
     private void Awake()
     {
         playerMovement = GetComponent<PlayerMovement>();
+        stats = GetComponent<PlayerStats>();
+    }
+
+    private void Update()
+    {
+        coundown();
+    }
+
+
+    private void coundown()
+    {
+        
+        if (_teleported)
+        {
+            _timeLeft -= Time.deltaTime;
+
+            if (_timeLeft < 0) _teleported = false;
+        }
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Bomb"))
-        {
-            if (health > 0) health -= 15;
-
-            if (health <= 0) Destroy(gameObject);
-            else Destroy(collision.gameObject);
-        }
-
-        if (collision.gameObject.CompareTag("Treasure"))
-        {
+        if (collision.gameObject.CompareTag("Bomb")) {
+            if (stats.Health > 0) stats.Health -= 1;
             Destroy(collision.gameObject);
-
-            points += 10;
         }
 
-        if (collision.gameObject.CompareTag("Heal"))
-        {
+        if (collision.gameObject.CompareTag("Treasure")) {
+            stats.Points += 10;
             Destroy(collision.gameObject);
-
-            if (health < 100) health += 5;
-
         }
 
-        if(collision.gameObject.name == "TopWall" || collision.gameObject.name == "BottomWall") 
+        if (collision.gameObject.CompareTag("Heal")) {
+            if (stats.Health < 3) stats.Health += 1;
+            Destroy(collision.gameObject);
+        }
+
+        if (collision.gameObject.name == "TopWall" || collision.gameObject.name == "BottomWall")
         {
-            playerMovement.TeleportPlayerY();
+            if (!_teleported)
+                playerMovement.TeleportPlayerY();
+            _timeLeft = _defaultTimer;
+            _teleported = true;
         }
 
         if (collision.gameObject.name == "LeftWall" || collision.gameObject.name == "RightWall")
         {
-            playerMovement.TeleportPlayerX();
+            if (!_teleported)
+                playerMovement.TeleportPlayerX();
+            _timeLeft = _defaultTimer;
+            _teleported = true;
         }
-    }   
+    }
+
+
+    //private void OnTriggerExit2D(Collider2D collision)
+    //{
+    //    if (collision.gameObject.CompareTag("Wall"))
+    //    {
+    //        Debug.Log("Leave");
+    //        //Teleported = false;
+    //    }
+    //}
+
+    //private void OnCollisionEnter2D(Collision2D collision)
+    //{
+        
+    //}
 }
