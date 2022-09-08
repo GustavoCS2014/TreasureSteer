@@ -1,6 +1,8 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerAnimationScript : MonoBehaviour
 {
     private float input, rotationInput;
     [SerializeField] private Rigidbody2D rb2D;
@@ -39,15 +41,15 @@ public class PlayerMovement : MonoBehaviour
                 if (_acceleration > 1f) _acceleration = 1f;
                 break;
             case 0:
-                if(_acceleration > 0)
+                if (_acceleration > 0)
                 {
                     _acceleration -= _decelerationRate;
                     if (_acceleration < 0.001f) _acceleration = 0;
                 }
-                if(_acceleration < 0)
+                if (_acceleration < 0)
                 {
                     _acceleration += _decelerationRate;
-                    if(_acceleration > -0.001f) _acceleration = 0;
+                    if (_acceleration > -0.001f) _acceleration = 0;
                 }
                 break;
             case -1:
@@ -107,9 +109,9 @@ public class PlayerMovement : MonoBehaviour
         {
             _accBost = 8f;
             Debug.Log("BOOST");
-        } 
+        }
 
         _accBost = _accBost * 0.5f * Time.deltaTime;
-        if (_accBost < 1.01f) _accBost = 1; 
+        if (_accBost < 1.01f) _accBost = 1;
     }
 }
