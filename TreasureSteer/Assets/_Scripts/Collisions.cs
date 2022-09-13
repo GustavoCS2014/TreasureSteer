@@ -11,7 +11,7 @@ public class Collisions: MonoBehaviour
     [SerializeField] private bool _teleported;
     [SerializeField] private float _timeLeft, _defaultTimer;
     [SerializeField] private GameManager gameManager;
-
+    [SerializeField] private Animator BombAnimator;
     private void Awake()
     {
         playerMovement = GetComponent<PlayerMovement>();
@@ -39,8 +39,9 @@ public class Collisions: MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Bomb")) {
-            if (stats.Health > 0) stats.Health -= 1;
+            stats.Health -= 1;
             playerMovement.ResetSpeed();
+            playerMovement.Acceleration = 0f;
             Destroy(collision.gameObject);
         }
 
@@ -52,7 +53,7 @@ public class Collisions: MonoBehaviour
         }
 
         if (collision.gameObject.CompareTag("Heal")) {
-            if (stats.Health < 3) stats.Health += 1;
+            stats.Health += 1;
             Destroy(collision.gameObject);
         }
         
