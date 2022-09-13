@@ -2,12 +2,23 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    private float input, rotationInput;
+    private float input, rotationInput, defaultVel, defaultRotation, defaultFriction, defaultDeceleration, defaultAccel;
     [SerializeField] private Rigidbody2D rb2D;
     [SerializeField] private float _velocity, _accelerationRate, _decelerationRate, _torque, _friction, _rotationSpeed;
-    [SerializeField] private float _rotationAngle, _acceleration, _accBost = 1f;
+    [SerializeField] private float _rotationAngle, _accBost = 1f;
+    public float Acceleration;
+    [SerializeField] private int _speedCounter = 0;
 
-    void Update()
+    private void Awake()
+    {
+        defaultVel = _velocity;
+        defaultRotation = _rotationSpeed;
+        defaultFriction = _friction;
+        defaultDeceleration = _decelerationRate;
+        defaultAccel = _accelerationRate;
+    }
+
+    void FixedUpdate()
     {
         rotationInput = Input.GetAxisRaw("Horizontal");
         input = Input.GetAxisRaw("Vertical");
@@ -17,7 +28,6 @@ public class PlayerMovement : MonoBehaviour
         GetRotationAngle();
         RotatePlayer();
 
-        Propulsion();
     }
 
     public void RotatePlayer()
@@ -27,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void MovePlayer()
     {
-        rb2D.velocity = transform.up * _acceleration * _velocity * _accBost;
+        rb2D.velocity = transform.up * Acceleration * _velocity * _accBost;
     }
 
     private void GetAcceleration()
@@ -35,24 +45,24 @@ public class PlayerMovement : MonoBehaviour
         switch (input)
         {
             case 1:
-                _acceleration += _accelerationRate;
-                if (_acceleration > 1f) _acceleration = 1f;
+                Acceleration += _accelerationRate;
+                if (Acceleration > 1f) Acceleration = 1f;
                 break;
             case 0:
-                if(_acceleration > 0)
+                if(Acceleration > 0)
                 {
-                    _acceleration -= _decelerationRate;
-                    if (_acceleration < 0.001f) _acceleration = 0;
+                    Acceleration -= _decelerationRate;
+                    if (Acceleration < 0.001f) Acceleration = 0;
                 }
-                if(_acceleration < 0)
+                if(Acceleration < 0)
                 {
-                    _acceleration += _decelerationRate;
-                    if(_acceleration > -0.001f) _acceleration = 0;
+                    Acceleration += _decelerationRate;
+                    if(Acceleration > -0.001f) Acceleration = 0;
                 }
                 break;
             case -1:
-                _acceleration -= _accelerationRate;
-                if (_acceleration < -1f) _acceleration = -1f;
+                Acceleration -= _accelerationRate;
+                if (Acceleration < -1f) Acceleration = -1f;
                 break;
         }
     }
@@ -101,15 +111,26 @@ public class PlayerMovement : MonoBehaviour
         transform.position *= new Vector2(-1, 1);
     }
 
-    private void Propulsion()
+    public void IncreaseSpeed()
     {
-        if (Input.GetKeyUp(KeyCode.Space))
+        if(_speedCounter < 5)
         {
-            _accBost = 8f;
-            Debug.Log("BOOST");
-        } 
+            _velocity *= 1.2f;
+            _accelerationRate *= 1.2f;
+            _decelerationRate *= 1.2f;
+            _rotationSpeed *= 1.2f;
+            _friction *= 1.2f;
+            _speedCounter += 1;
+        }
+    }
 
-        _accBost = _accBost * 0.5f * Time.deltaTime;
-        if (_accBost < 1.01f) _accBost = 1; 
+    public void ResetSpeed()
+    {
+        _velocity = defaultVel;
+        _rotationSpeed = defaultRotation;
+        _decelerationRate = defaultDeceleration;
+        _friction = defaultFriction;
+        _accelerationRate = defaultAccel;
+        _speedCounter = 0;
     }
 }
