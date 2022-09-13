@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4463175852616267283}
   - component: {fileID: 7499096844696731059}
   - component: {fileID: 8666626454844914579}
+  - component: {fileID: 8935951033980077523}
   m_Layer: 0
   m_Name: Bomb_ctr
   m_TagString: Untagged
@@ -105,6 +106,20 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &8935951033980077523
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3295706839894787944}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c0122402ad5aaf49923a445966dee9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 8666626454844914579}
+  Collided: 0
 --- !u!1 &8626780956885071714
 GameObject:
   m_ObjectHideFlags: 0
