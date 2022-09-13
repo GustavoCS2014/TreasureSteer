@@ -21,7 +21,6 @@ public class Collisions: MonoBehaviour
         coundown();
     }
 
-
     private void coundown()
     {
         
