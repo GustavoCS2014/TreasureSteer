@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Collisions: MonoBehaviour
@@ -12,6 +9,14 @@ public class Collisions: MonoBehaviour
     [SerializeField] private float _timeLeft, _defaultTimer;
     [SerializeField] private GameManager gameManager;
     public bool BombCollided;
+
+    public HealthManager healthManager;
+    public ScoreManager scoreManager;
+
+    public AudioSource treasure;
+    public AudioSource heal;
+    public AudioSource bomb;
+
     private void Awake()
     {
         playerMovement = GetComponent<PlayerMovement>();
@@ -32,28 +37,38 @@ public class Collisions: MonoBehaviour
 
             if (_timeLeft < 0) _teleported = false;
         }
-
-
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Bomb")){
+            bomb.Play();
+
             stats.Health -= 1;
             playerMovement.ResetSpeed();
             playerMovement.Acceleration = 0.1f;
             collision.gameObject.GetComponentInChildren<BombScript>().explode = true;
+
+            healthManager.createHearts();
         }
         if (collision.gameObject.CompareTag("Treasure")) {
+            treasure.Play();
+
             stats.Points += 10;
             gameManager.treasures.Remove(collision.gameObject);
             playerMovement.IncreaseSpeed();
             collision.gameObject.GetComponentInChildren<TreasureScript>().Collected = true;
+
+            scoreManager.setScore(stats.Points);
         }
 
         if (collision.gameObject.CompareTag("Heal")) {
+            heal.Play();
+
             stats.Health += 1;
             Destroy(collision.gameObject);
+
+            healthManager.createHearts();
         }
         
         

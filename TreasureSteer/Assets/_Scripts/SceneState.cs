@@ -10,7 +10,11 @@ public class SceneState : MonoBehaviour
         Register,
         Gameplay,
         MainMenu,
-        SelectLevel
+        SelectLevel,
+        Scoreboard,
+        Lvl1,
+        Lvl2,
+        Lvl3
     }
 
     public void callbackRegister()
@@ -33,9 +37,24 @@ public class SceneState : MonoBehaviour
         sceneSwitcher(Scene.SelectLevel);
     }
 
-    public void callbackGameplay()
+    public void callbackScoreboard()
     {
-        sceneSwitcher(Scene.Gameplay);
+        sceneSwitcher(Scene.Scoreboard);
+    }
+
+    public void callbackLvl1()
+    {
+        sceneSwitcher(Scene.Lvl1);
+    }
+
+    public void callbackLvl2()
+    {
+        sceneSwitcher(Scene.Lvl2);
+    }
+
+    public void callbackLvl3()
+    {
+        sceneSwitcher(Scene.Lvl3);
     }
 
     public void sceneSwitcher(Scene scene)
@@ -60,6 +79,22 @@ public class SceneState : MonoBehaviour
 
             case Scene.SelectLevel:
                 SceneManager.LoadScene("SelectLevel");
+                break;
+
+            case Scene.Scoreboard:
+                SceneManager.LoadScene("Scoreboard");
+                break;
+
+            case Scene.Lvl1:
+                SceneManager.LoadScene("Lvl1");
+                break;
+
+            case Scene.Lvl2:
+                SceneManager.LoadScene("Lvl2");
+                break;
+
+            case Scene.Lvl3:
+                SceneManager.LoadScene("Lvl3");
                 break;
         }
     }

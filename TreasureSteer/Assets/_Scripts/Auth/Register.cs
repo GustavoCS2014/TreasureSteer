@@ -1,3 +1,4 @@
+using Gravitons.UI.Modal;
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Text;
@@ -11,6 +12,8 @@ public class Register : MonoBehaviour
     [SerializeField] private TMP_InputField userName;
     [SerializeField] private TMP_InputField userPassword;
     [SerializeField] private TextMeshProUGUI textPassword;
+
+    public GameObject blurScene;
 
     public SceneState sceneState;
 
@@ -39,6 +42,8 @@ public class Register : MonoBehaviour
 
     IEnumerator Upload()
     {
+        JObject json = new();
+
         WWWForm data = new WWWForm();
         data.AddField("name", fullName.text);
         data.AddField("username", userName.text);
@@ -55,12 +60,56 @@ public class Register : MonoBehaviour
         else
         {
             string results = Encoding.Default.GetString(unityWebRequest.downloadHandler.data);
-            JObject json = JObject.Parse(results);
 
+            try
+            {
+                json = JObject.Parse(results);
+            } catch
+            {
+                blurScene.gameObject.SetActive(true);
+
+                ModalManager.Show("Error", "An error has ocurred, try again!", new[] { new ModalButton() {
+                    Text = "OK",
+                    Callback = canceledRegister
+                } });
+
+                yield break;
+            }
+            
             if (json["status"].ToString() == "ok")
             {
-                sceneState.callbackLogin();
+                blurScene.gameObject.SetActive(true);
+
+                ModalManager.Show("Success!", json["message"].ToString(), new[] { new ModalButton() {
+                    Text = "Log In",
+                    Callback = successRegister
+                } });
+            } else
+            {
+                string message = "";
+
+                foreach(string error in json["message"])
+                {
+                    message += error + "\n";
+                }
+
+                blurScene.gameObject.SetActive(true);
+
+                ModalManager.Show("Error", message, new[] { new ModalButton() {
+                    Text = "OK",
+                    Callback = canceledRegister
+                } });
             }
         }
+    }
+
+    private void successRegister()
+    {
+        sceneState.callbackLogin();
+    }
+
+    private void canceledRegister()
+    {
+        blurScene.gameObject.SetActive(false);
     }
 }

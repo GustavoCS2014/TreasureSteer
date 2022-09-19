@@ -8,6 +8,9 @@ TagManager:
   - Treasure
   - Heal
   - Wall
+  - Music
+  - Heart
+  - MusicGameplay
   layers:
   - Default
   - TransparentFX

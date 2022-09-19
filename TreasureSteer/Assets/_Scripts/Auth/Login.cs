@@ -1,10 +1,10 @@
+using Gravitons.UI.Modal;
 using Newtonsoft.Json.Linq;
 using System.Collections;
 using System.Text;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityEngine.UIElements;
 
 public class Login : MonoBehaviour
 {
@@ -12,44 +12,20 @@ public class Login : MonoBehaviour
     [SerializeField] private TMP_InputField userPassword;
     [SerializeField] private TextMeshProUGUI textPassword;
 
+    [SerializeField] private TextMeshProUGUI textInfo;
     public GameObject loadScene;
     public GameObject loadBar;
-    [SerializeField] private TextMeshProUGUI textInfo;
+    public GameObject blurScene;
+    RectTransform rectTransform;
 
     public SceneState sceneState;
 
-    float countdown = -1f;
-    bool done = false;
-
     void Start()
     {
+        rectTransform = loadBar.GetComponent<RectTransform>();
+
         loadScene.gameObject.SetActive(false);
-    }
-
-    private void Update()
-    {
-        if(countdown > 0f)
-        {
-            countdown -= Time.deltaTime;
-
-            RectTransform rectTransform = loadBar.GetComponent<RectTransform>();
-
-            if(countdown > 1f) 
-                rectTransform.sizeDelta = new Vector2(Mathf.RoundToInt(100 - ((countdown -1) * 25)), 3f);
-
-            if (countdown <= 0f)
-            {
-                done = true;
-            }
-
-            if(countdown > 3f) textInfo.text = "Connecting to the server";
-            if(countdown < 3f) textInfo.text = "Logging in";
-        }
-
-        if (done)
-        {
-            sceneState.callbackMainMenu();
-        }
+        blurScene.gameObject.SetActive(false);
     }
 
     public void showPassword()
@@ -69,7 +45,7 @@ public class Login : MonoBehaviour
         userPassword.ForceLabelUpdate();
     }
 
-    public void login()
+    private void login()
     {
         StartCoroutine(Upload());
     }
@@ -77,6 +53,9 @@ public class Login : MonoBehaviour
     IEnumerator Upload()
     {
         loadScene.gameObject.SetActive(true);
+        textInfo.text = "Connecting to the Server";
+        yield return new WaitForSeconds(1f);
+        rectTransform.sizeDelta = new Vector2(33.3f, 3f);
 
         WWWForm data = new WWWForm();
         data.AddField("username", userName.text);
@@ -91,19 +70,43 @@ public class Login : MonoBehaviour
             Debug.Log(unityWebRequest.result);
         } else
         {
+            textInfo.text = "Authenticating Credentials";
+            rectTransform.sizeDelta = new Vector2(66.6f, 3f);
+            yield return new WaitForSeconds(1f);
+
             string results = Encoding.Default.GetString(unityWebRequest.downloadHandler.data);
             JObject json = JObject.Parse(results);
 
             if (json["status"].ToString() == "ok")
             {
-                countdown = 5;
+                textInfo.text = "Logged In";
+                rectTransform.sizeDelta = new Vector2(100f, 3f);
+                yield return new WaitForSeconds(1f);
+
+                sceneState.callbackMainMenu();
+
                 setToken(json["token"].ToString());
+            } else
+            {
+                loadScene.gameObject.SetActive(false);
+                blurScene.gameObject.SetActive(true);
+
+                ModalManager.Show("An error has occurred", json["message"].ToString(), new[] { new ModalButton() { 
+                    Text = "OK", 
+                    Callback = canceledLogin
+                } });
             }
         }
     }
 
-    public void setToken(string value)
+    private void setToken(string value)
     {
         PlayerPrefs.SetString("token", value);
+    }
+
+    private void canceledLogin()
+    {
+        blurScene.gameObject.SetActive(false);
+        rectTransform.sizeDelta = new Vector2(0f, 3f);
     }
 }
