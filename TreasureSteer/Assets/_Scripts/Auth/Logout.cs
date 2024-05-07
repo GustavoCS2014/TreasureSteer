@@ -18,7 +18,7 @@ public class Logout : MonoBehaviour
         string token = getToken();
         JObject json = new();
 
-        UnityWebRequest unityWebRequest = UnityWebRequest.Post("http://treasure-steer-api.test/api/user/logout", "");
+        UnityWebRequest unityWebRequest = UnityWebRequest.PostWwwForm("http://treasure-steer-api.test/api/user/logout", "");
         unityWebRequest.SetRequestHeader("Authorization", "Bearer " + token);
 
         yield return unityWebRequest.SendWebRequest();
